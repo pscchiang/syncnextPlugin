@@ -1,0 +1,60 @@
+name: Download JSON
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+  schedule:
+    - cron: "0 * * * *"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: get source_ali.json
+        uses: wei/wget@v1.1.1
+        with:
+          args: -O source_ali.json "https://notion-api.splitbee.io/v1/table/273e28c85324400db3e78c7009f35214"
+
+      - name: get sources18.json
+        uses: wei/wget@v1.1.1
+        with:
+          args: -O sources18.json "https://notion-api.splitbee.io/v1/table/362cb65cfb4f4655995d6e8d80dea41c"
+
+      - name: get sourcesv3.json
+        uses: wei/wget@v1.1.1
+        with:
+          args: -O sourcesv3.json "https://notion-api.splitbee.io/v1/table/58f3de30e9dc4b7f8de6a714150057f4"
+
+      - name: get sourcesv2.json
+        uses: wei/wget@v1.1.1
+        with:
+          args: -O sourcesv2.json "https://notion-api.splitbee.io/v1/table/da1a91b297ea4e49957643930f27c0b8"
+
+      - name: get appData.json
+        uses: wei/wget@v1.1.1
+        with:
+          args: -O appData.json "https://notion-api.splitbee.io/v1/table/efa6a396e3854a2592a88f787b9c4a19"
+
+      - name: get domainInfo.json
+        uses: wei/wget@v1.1.1
+        with:
+          args: -O domainInfo.json "https://notion-api.splitbee.io/v1/table/8b953280c3564fb7af1ec9d8c63f584c"
+
+      - name: Converts Markdown to HTML
+        uses: jaywcjlove/markdown-to-html-cli@main
+        with:
+          source: README.md
+          output: index.html
+          github-corners: https://github.com/jaywcjlove/markdown-to-html-cli
+          favicon: data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌐</text></svg>
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Apply downloaded JSON
